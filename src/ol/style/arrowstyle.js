@@ -28,10 +28,26 @@ goog.require('ol.style.Stroke');
  */
 ol.style.Arrow = function(options) {
 
+  goog.asserts.assert(
+      options.points.length % 2 === 0,
+      '"points" must have an even number of values');
+
   /**
    * @private
-   * @type {Array.<string>}
+   * @type {Array.<number>}
    */
+  this.points_ = options.points;
+
+  /**
+  * @private
+  * @type {number}
+  */
+  this.arrowScale_ = options.scale;
+
+  /**
+  * @private
+  * @type {Array.<string>}
+  */
   this.checksums_ = null;
 
   /**
@@ -218,7 +234,8 @@ ol.style.Arrow.prototype.unlistenImageChange = goog.nullFunction;
  * @typedef {{
  *   strokeStyle: (string|undefined),
  *   strokeWidth: number,
- *   size: number,
+ *   length: number,
+ *   width: number,
  *   lineCap: string,
  *   lineDash: Array.<number>,
  *   lineJoin: string,
@@ -233,7 +250,8 @@ ol.style.Arrow.RenderOptions;
  * @param {ol.style.AtlasManager|undefined} atlasManager
  */
 ol.style.Arrow.prototype.render_ = function(atlasManager) {
-  var imageSize;
+  var imageWidth;
+  var imageHeight;
   var lineCap = '';
   var lineJoin = '';
   var miterLimit = 0;
@@ -265,13 +283,26 @@ ol.style.Arrow.prototype.render_ = function(atlasManager) {
     }
   }
 
-  var size = 1;
+  var width = 0;
+  var height = 0;
+  for (var i = 0; i < this.points_.length; i += 2) {
+    if (width < this.points_[i]) {
+      width = this.points_[i];
+    }
+    if (height < this.points_[i + 1]) {
+      height = this.points_[i + 1];
+    }
+  }
+
+  width *= this.arrowScale_;
+  height *= this.arrowScale_;
 
   /** @type {ol.style.Arrow.RenderOptions} */
   var renderOptions = {
     strokeStyle: strokeStyle,
     strokeWidth: strokeWidth,
-    size: size,
+    length: height,
+    width: width,
     lineCap: lineCap,
     lineDash: lineDash,
     lineJoin: lineJoin,
@@ -283,12 +314,12 @@ ol.style.Arrow.prototype.render_ = function(atlasManager) {
     this.canvas_ = /** @type {HTMLCanvasElement} */
         (goog.dom.createElement(goog.dom.TagName.CANVAS));
 
-    this.canvas_.height = size;
-    this.canvas_.width = size;
+    this.canvas_.height = height;
+    this.canvas_.width = width;
 
     // canvas.width and height are rounded to the closest integer
-    size = this.canvas_.width;
-    imageSize = size;
+    imageWidth = width = this.canvas_.width;
+    imageHeight = height = this.canvas_.height;
 
     var context = /** @type {CanvasRenderingContext2D} */
         (this.canvas_.getContext('2d'));
@@ -297,7 +328,8 @@ ol.style.Arrow.prototype.render_ = function(atlasManager) {
     this.createHitDetectionCanvas_(renderOptions);
   } else {
     // an atlas manager is used, add the symbol to an atlas
-    size = Math.round(size);
+    width = Math.round(width);
+    height = Math.round(height);
 
     var hasCustomHitDetectionImage = goog.isNull(this.fill_);
     var renderHitDetectionCallback;
@@ -309,13 +341,14 @@ ol.style.Arrow.prototype.render_ = function(atlasManager) {
 
     var id = this.getChecksum();
     var info = atlasManager.add(
-        id, size, size, goog.bind(this.draw_, this, renderOptions),
+        id, width, height, goog.bind(this.draw_, this, renderOptions),
         renderHitDetectionCallback);
     goog.asserts.assert(!goog.isNull(info), 'shape size is too large');
 
     this.canvas_ = info.image;
     this.origin_ = [info.offsetX, info.offsetY];
-    imageSize = info.image.width;
+    imageWidth = info.image.width;
+    imageHeight = info.image.height;
 
     if (hasCustomHitDetectionImage) {
       this.hitDetectionCanvas_ = info.hitImage;
@@ -323,13 +356,13 @@ ol.style.Arrow.prototype.render_ = function(atlasManager) {
           [info.hitImage.width, info.hitImage.height];
     } else {
       this.hitDetectionCanvas_ = this.canvas_;
-      this.hitDetectionImageSize_ = [imageSize, imageSize];
+      this.hitDetectionImageSize_ = [imageWidth, imageHeight];
     }
   }
 
-  this.anchor_ = [size / 2, size / 2];
-  this.size_ = [size, size];
-  this.imageSize_ = [imageSize, imageSize];
+  this.anchor_ = [this.points_[0] * this.arrowScale_, this.points_[1] * this.arrowScale_];
+  this.size_ = [width, height];
+  this.imageSize_ = [imageWidth, imageHeight];
 };
 
 
@@ -411,7 +444,7 @@ ol.style.Arrow.prototype.drawHitDetectionCanvas_ =
   context.translate(x, y);
 
   context.beginPath();
-  
+
   context.fillStyle = ol.render.canvas.defaultFillStyle;
   context.fill();
   if (!goog.isNull(this.stroke_)) {
