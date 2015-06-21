@@ -5564,7 +5564,7 @@ olx.style;
 
 /**
  * @typedef {{fill: (ol.style.Fill|undefined),
- *     points: (Array.<number>),
+ *     shape: (Array.<number>),
  *     scale: (number),
  *     angle: (number|undefined),
  *     snapToPixel: (boolean|undefined),
@@ -5589,7 +5589,7 @@ olx.style.ArrowOptions.prototype.fill;
  * @type {Array.<number>}
  * @api
  */
-olx.style.ArrowOptions.prototype.points;
+olx.style.ArrowOptions.prototype.shape;
 
 
 /**

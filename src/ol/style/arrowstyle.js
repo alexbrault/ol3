@@ -44,14 +44,14 @@ ol.style.ArrowShape = {
 ol.style.Arrow = function(options) {
 
   goog.asserts.assert(
-      options.points.length % 2 === 0,
-      '"points" must have an even number of values');
+      options.shape.length % 2 === 0,
+      '"shape" must have an even number of values');
 
   /**
    * @private
    * @type {Array.<number>}
    */
-  this.points_ = options.points;
+  this.shape_ = options.shape;
 
   /**
   * @private
@@ -300,12 +300,12 @@ ol.style.Arrow.prototype.render_ = function(atlasManager) {
 
   var width = 0;
   var height = 0;
-  for (var i = 0; i < this.points_.length; i += 2) {
-    if (width < this.points_[i]) {
-      width = this.points_[i];
+  for (var i = 0; i < this.shape_.length; i += 2) {
+    if (width < this.shape_[i]) {
+      width = this.shape_[i];
     }
-    if (height < this.points_[i + 1]) {
-      height = this.points_[i + 1];
+    if (height < this.shape_[i + 1]) {
+      height = this.shape_[i + 1];
     }
   }
 
@@ -376,8 +376,8 @@ ol.style.Arrow.prototype.render_ = function(atlasManager) {
   }
 
   this.anchor_ = [
-    this.points_[0] * this.arrowScale_ + strokeWidth,
-    this.points_[1] * this.arrowScale_ + strokeWidth
+    this.shape_[0] * this.arrowScale_ + strokeWidth,
+    this.shape_[1] * this.arrowScale_ + strokeWidth
   ];
   this.size_ = [width, height];
   this.imageSize_ = [imageWidth, imageHeight];
@@ -401,12 +401,12 @@ ol.style.Arrow.prototype.draw_ = function(renderOptions, context, x, y) {
 
   context.beginPath();
   context.moveTo(
-      this.points_[0] * this.arrowScale_,
-      this.points_[1] * this.arrowScale_);
-  for (var i = 2; i < this.points_.length; i += 2) {
+      this.shape_[0] * this.arrowScale_,
+      this.shape_[1] * this.arrowScale_);
+  for (var i = 2; i < this.shape_.length; i += 2) {
     context.lineTo(
-        this.points_[i] * this.arrowScale_,
-        this.points_[i + 1] * this.arrowScale_);
+        this.shape_[i] * this.arrowScale_,
+        this.shape_[i + 1] * this.arrowScale_);
   }
 
   if (!goog.isNull(this.fill_)) {
@@ -473,12 +473,12 @@ ol.style.Arrow.prototype.drawHitDetectionCanvas_ =
 
   context.beginPath();
   context.moveTo(
-      this.points_[0] * this.arrowScale_,
-      this.points_[1] * this.arrowScale_);
-  for (var i = 2; i < this.points_.length; i += 2) {
+      this.shape_[0] * this.arrowScale_,
+      this.shape_[1] * this.arrowScale_);
+  for (var i = 2; i < this.shape_.length; i += 2) {
     context.lineTo(
-        this.points_[i] * this.arrowScale_,
-        this.points_[i + 1] * this.arrowScale_);
+        this.shape_[i] * this.arrowScale_,
+        this.shape_[i + 1] * this.arrowScale_);
   }
 
   context.fillStyle = ol.render.canvas.defaultFillStyle;
