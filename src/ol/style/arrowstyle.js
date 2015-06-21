@@ -1,4 +1,5 @@
 goog.provide('ol.style.Arrow');
+goog.provide('ol.style.ArrowShape');
 
 goog.require('goog.asserts');
 goog.require('goog.dom');
@@ -12,6 +13,20 @@ goog.require('ol.style.Fill');
 goog.require('ol.style.Image');
 goog.require('ol.style.ImageState');
 goog.require('ol.style.Stroke');
+
+
+/**
+ * Enum of predefined arrow shapes
+ * @enum {Array.<number>}
+ */
+ol.style.ArrowShape = {
+  LINE_BOTH: [1, 0.2, 0.7, 0, 1, 0.2, 0.7, 0.4, 1, 0.2, 0, 0.2],
+  LINE_HALF_LEFT: [1, 0.2, 0.7, 0, 1, 0.2, 0, 0],
+  LINE_HALF_RIGHT: [1, 0, 0.7, 0.2, 1, 0, 0, 0],
+  LINE_TIP_BOTH: [0.3, 0.2, 0, 0, 0.3, 0.2, 0, 0.4],
+  LINE_TIP_HALF_LEFT: [0.3, 0.2, 0, 0],
+  LINE_TIP_HALF_RIGHT: [0.3, 0, 0.0, 0.2]
+};
 
 
 
