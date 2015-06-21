@@ -294,8 +294,8 @@ ol.style.Arrow.prototype.render_ = function(atlasManager) {
     }
   }
 
-  width *= this.arrowScale_;
-  height *= this.arrowScale_;
+  width = width * this.arrowScale_ + 2 * strokeWidth;
+  height = height * this.arrowScale_ + 2 * strokeWidth;
 
   /** @type {ol.style.Arrow.RenderOptions} */
   var renderOptions = {
@@ -360,7 +360,10 @@ ol.style.Arrow.prototype.render_ = function(atlasManager) {
     }
   }
 
-  this.anchor_ = [this.points_[0] * this.arrowScale_, this.points_[1] * this.arrowScale_];
+  this.anchor_ = [
+    this.points_[0] * this.arrowScale_ + strokeWidth,
+    this.points_[1] * this.arrowScale_ + strokeWidth
+  ];
   this.size_ = [width, height];
   this.imageSize_ = [imageWidth, imageHeight];
 };
@@ -378,9 +381,18 @@ ol.style.Arrow.prototype.draw_ = function(renderOptions, context, x, y) {
   context.setTransform(1, 0, 0, 1, 0, 0);
 
   // then move to (x, y)
-  context.translate(x, y);
+  context.translate(x + renderOptions.strokeWidth,
+      y + renderOptions.strokeWidth);
 
   context.beginPath();
+  context.moveTo(
+      this.points_[0] * this.arrowScale_,
+      this.points_[1] * this.arrowScale_);
+  for (var i = 2; i < this.points_.length; i += 2) {
+    context.lineTo(
+        this.points_[i] * this.arrowScale_,
+        this.points_[i + 1] * this.arrowScale_);
+  }
 
   if (!goog.isNull(this.fill_)) {
     context.fillStyle = ol.color.asString(this.fill_.getColor());
@@ -407,7 +419,7 @@ ol.style.Arrow.prototype.draw_ = function(renderOptions, context, x, y) {
  */
 ol.style.Arrow.prototype.createHitDetectionCanvas_ =
     function(renderOptions) {
-  this.hitDetectionImageSize_ = [renderOptions.size, renderOptions.size];
+  this.hitDetectionImageSize_ = [renderOptions.width, renderOptions.height];
   if (!goog.isNull(this.fill_)) {
     this.hitDetectionCanvas_ = this.canvas_;
     return;
@@ -419,8 +431,8 @@ ol.style.Arrow.prototype.createHitDetectionCanvas_ =
       (goog.dom.createElement(goog.dom.TagName.CANVAS));
   var canvas = this.hitDetectionCanvas_;
 
-  canvas.height = renderOptions.size;
-  canvas.width = renderOptions.size;
+  canvas.height = renderOptions.height;
+  canvas.width = renderOptions.width;
 
   var context = /** @type {CanvasRenderingContext2D} */
       (canvas.getContext('2d'));
@@ -441,9 +453,18 @@ ol.style.Arrow.prototype.drawHitDetectionCanvas_ =
   context.setTransform(1, 0, 0, 1, 0, 0);
 
   // then move to (x, y)
-  context.translate(x, y);
+  context.translate(x + renderOptions.strokeWidth,
+      y + renderOptions.strokeWidth);
 
   context.beginPath();
+  context.moveTo(
+      this.points_[0] * this.arrowScale_,
+      this.points_[1] * this.arrowScale_);
+  for (var i = 2; i < this.points_.length; i += 2) {
+    context.lineTo(
+        this.points_[i] * this.arrowScale_,
+        this.points_[i + 1] * this.arrowScale_);
+  }
 
   context.fillStyle = ol.render.canvas.defaultFillStyle;
   context.fill();
