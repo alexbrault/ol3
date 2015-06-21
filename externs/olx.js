@@ -5564,6 +5564,94 @@ olx.style;
 
 /**
  * @typedef {{fill: (ol.style.Fill|undefined),
+ *     points: (Array.<number>),
+ *     scale: (number),
+ *     angle: (number|undefined),
+ *     snapToPixel: (boolean|undefined),
+ *     stroke: (ol.style.Stroke|undefined),
+ *     rotation: (number|undefined),
+ *     atlasManager: (ol.style.AtlasManager|undefined)}}
+ * @api
+ */
+olx.style.ArrowOptions;
+
+
+/**
+ * Fill style.
+ * @type {ol.style.Fill|undefined}
+ * @api
+ */
+olx.style.ArrowOptions.prototype.fill;
+
+
+/**
+ * List of points in the arrow. The first point is the arrow's tip.
+ * @type {Array.<number>}
+ * @api
+ */
+olx.style.ArrowOptions.prototype.points;
+
+
+/**
+ * Scale of the arrow.
+ * @type {number|undefined}
+ * @api
+ */
+olx.style.ArrowOptions.prototype.scale;
+
+
+/**
+ * Shape's angle in radians. A value of 0 will have one of the arrow's tip
+ * facing up.
+ * Default value is 0.
+ * @type {number|undefined}
+ * @api
+ */
+olx.style.ArrowOptions.prototype.angle;
+
+
+/**
+ * If `true` integral numbers of pixels are used as the X and Y pixel
+ * coordinate when drawing the shape in the output canvas. If `false`
+ * fractional numbers may be used. Using `true` allows for "sharp"
+ * rendering (no blur), while using `false` allows for "accurate"
+ * rendering. Note that accuracy is important if the shape's
+ * position is animated. Without it, the shape may jitter noticeably.
+ * Default value is `true`.
+ * @type {boolean|undefined}
+ * @api
+ */
+olx.style.ArrowOptions.prototype.snapToPixel;
+
+
+/**
+ * Stroke style.
+ * @type {ol.style.Stroke|undefined}
+ * @api
+ */
+olx.style.ArrowOptions.prototype.stroke;
+
+
+/**
+ * Rotation in radians (positive rotation clockwise). Default is `0`.
+ * @type {number|undefined}
+ * @api
+ */
+olx.style.ArrowOptions.prototype.rotation;
+
+
+/**
+ * The atlas manager to use for this symbol. When using WebGL it is
+ * recommended to use an atlas manager to avoid texture switching.
+ * If an atlas manager is given, the symbol is added to an atlas.
+ * By default no atlas manager is used.
+ * @type {ol.style.AtlasManager|undefined}
+ */
+olx.style.ArrowOptions.prototype.atlasManager;
+
+
+/**
+ * @typedef {{fill: (ol.style.Fill|undefined),
  *     radius: number,
  *     snapToPixel: (boolean|undefined),
  *     stroke: (ol.style.Stroke|undefined),
