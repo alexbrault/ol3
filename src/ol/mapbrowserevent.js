@@ -321,6 +321,7 @@ ol.MapBrowserEventHandler.prototype.handlePointerUp_ = function(pointerEvent) {
     goog.asserts.assert(!goog.isNull(this.down_),
         'this.down_ should not be null');
     this.emulateClick_(this.down_);
+    pointerEvent.preventDefault();
   }
 
   goog.asserts.assert(this.activePointers_ >= 0,
